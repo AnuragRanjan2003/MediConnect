@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.project2.databinding.FragmentHomeBinding
-import com.example.project2.viewModels.SurveyActivityViewModel
+import com.example.project2.models.Symptom
+import com.example.project2.models.features.AllFeatures
+import com.example.project2.viewModels.SurveyViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,7 +26,7 @@ class HomeFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private lateinit var viewModel: SurveyActivityViewModel
+    private lateinit var viewModel: SurveyViewModel
     private lateinit var binding: FragmentHomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,13 +40,20 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this)[SurveyActivityViewModel::class.java]
-        viewModel.getResult(name = "WeightLoss", value = "50")
-        viewModel.observeAnalysisJson().observe(viewLifecycleOwner){ e("analysis", it) }
+        viewModel = ViewModelProvider(this)[SurveyViewModel::class.java]
+
+        val symp1 = Symptom(AllFeatures().Chills, "1")
+        viewModel.getResult(
+            symptomList = listOf(symp1),
+            passPhrase = getString(R.string.passPhrase)
+        )
+        viewModel.observeAnalysisJson().observe(viewLifecycleOwner) { e("analysis", it) }
         viewModel.observePostStat().observe(viewLifecycleOwner) { e("post_stat", it) }
+        viewModel.len.observe(viewLifecycleOwner) { e("obj0 key", it.toString()) }
+        viewModel.observeDiseases().observe(viewLifecycleOwner) { e("Diseases", "$it") }
 
         return binding.root
     }

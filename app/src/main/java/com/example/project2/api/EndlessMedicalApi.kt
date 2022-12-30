@@ -1,7 +1,6 @@
 package com.example.project2.api
 
 import com.example.project2.models.Terms.TermsResponse
-import com.example.project2.models.analysis.AnalysisResponse
 import com.example.project2.models.initSession.SessionResponse
 import retrofit2.Call
 import retrofit2.http.*
@@ -51,7 +50,7 @@ interface EndlessMedicalApi {
         hostKey: String,
         @Query("SessionID")
         sessionId: String
-    ): Call<AnalysisResponse>
+    ): Call<Any>
 
 
 }
