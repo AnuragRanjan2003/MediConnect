@@ -13,6 +13,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project2.R
 import com.example.project2.models.SurveyItem
+import com.example.project2.models.Symptom
 import com.google.android.material.chip.Chip
 
 class SurveyRecAdapter(surveyList: ArrayList<SurveyItem>, context: Context) :
@@ -115,8 +116,8 @@ class SurveyRecAdapter(surveyList: ArrayList<SurveyItem>, context: Context) :
         return surveyList.size
     }
 
-    fun getList(): List<SurveyItem> {
-        val list = ArrayList<SurveyItem>()
+    fun getList(): List<Symptom> {
+        val list = ArrayList<Symptom>()
         for (item in surveyList) {
             if (item.value != "none")
                 list.add(parseItemToValue(item))
@@ -124,13 +125,13 @@ class SurveyRecAdapter(surveyList: ArrayList<SurveyItem>, context: Context) :
         return list
     }
 
-    private fun parseItemToValue(item: SurveyItem): SurveyItem {
+    private fun parseItemToValue(item: SurveyItem): Symptom {
         val temp = item
         when (item.value) {
             "mid" -> temp.value = "20"
             "high" -> temp.value = "50"
         }
-        return temp
+        return Symptom(temp.heading,temp.value)
     }
 
     override fun getFilter(): Filter {
@@ -144,13 +145,13 @@ class SurveyRecAdapter(surveyList: ArrayList<SurveyItem>, context: Context) :
             if (constraint.isNullOrBlank()) {
                 filteredList.addAll(fullList)
             } else {
-                val query = constraint.toString().lowercase().trim()
+                val query = constraint.toString().trim()
                 for (item in fullList) {
-                    if (item.heading.lowercase().contains(query))
+                    if (item.heading.contains(query,true))
                         filteredList.add(item)
                 }
             }
-            val results = FilterResults()
+            val results =  FilterResults()
             results.values = filteredList
             return results
         }

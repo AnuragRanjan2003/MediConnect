@@ -23,6 +23,7 @@ class ApplicationActivity : AppCompatActivity() {
         setContentView(binding.root)
         list = ArrayList()
         viewModel = ViewModelProvider(this)[ApplicationActivityViewModel::class.java]
+
         viewModel.getFeatures()
         viewModel.observeFeatures().observe(this) { d("Feature response", "$it") }
         viewModel.observeSurveyList().observe(this) {
@@ -32,16 +33,23 @@ class ApplicationActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         }
 
+        viewModel.observeDiseases().observe(this) { e("Diseases", "$it") }
 //        val item1 = SurveyItem("Heading 1", "content 1")
 //        val item2 = SurveyItem("Heading 2", "content 2")
 //        list = ArrayList(listOf(item1, item2))
 
-        adapter = SurveyRecAdapter(list , this)
+        adapter = SurveyRecAdapter(list, this)
         binding.symptomsRec.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.symptomsRec.hasFixedSize()
         binding.symptomsRec.adapter = this.adapter
-        binding.testing.setOnClickListener { e("survey list", "${adapter.getList()}") }
+        binding.testing.setOnClickListener {
+            e("survey list", "${adapter.getList()}")
+            if(adapter.getList().isNotEmpty())
+                viewModel.getResult(adapter.getList(), getString(R.string.passPhrase))
+            else
+                e("Diseases","no symptoms reported")
+        }
         binding.etSearch.doAfterTextChanged { adapter.filter.filter(it.toString()) }
 
     }
