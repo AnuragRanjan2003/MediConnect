@@ -4,6 +4,7 @@ import android.util.Log.e
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.project2.Completion
 import com.example.project2.models.Disease
 import com.example.project2.models.SurveyItem
 import com.example.project2.models.Symptom
@@ -18,11 +19,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-private const val API_KEY = "8d1c079557mshfad6e967741145dp1026f1jsnf8e1854363fb"
-private const val API_HOST = "endlessmedicalapi1.p.rapidapi.com"
+const val API_KEY = "8d1c079557mshfad6e967741145dp1026f1jsnf8e1854363fb"
+const val API_HOST = "endlessmedicalapi1.p.rapidapi.com"
+
 class ApplicationActivityViewModel : ViewModel() {
 
-    private val TAG = "Feature response"
+    private val tag = "Feature response"
     private val featuresList: MutableLiveData<List<String>> by lazy { MutableLiveData<List<String>>() }
     private val featuresAsSurveyItem: MutableLiveData<ArrayList<SurveyItem>> by lazy { MutableLiveData<ArrayList<SurveyItem>>() }
     private val status: MutableLiveData<SessionResponse> by lazy { MutableLiveData<SessionResponse>() }
@@ -46,20 +48,24 @@ class ApplicationActivityViewModel : ViewModel() {
                             featuresList.value = response.body()!!.data
                             populateList(featuresList.value!!)
                         } else
-                            e(TAG, response.body()!!.status)
+                            e(tag, response.body()!!.status)
 
                     } else {
-                        e(TAG, "Feature response empty")
+                        e(tag, "Feature response empty")
                     }
                 }
 
                 override fun onFailure(call: Call<FeatureResponse?>, t: Throwable) {
-                    e(TAG, t.message.toString())
+                    e(tag, t.message.toString())
                 }
             })
     }
 
-    private fun getStatus(symptomList: List<Symptom>, passPhrase: String) {
+    private fun getStatus(
+        symptomList: List<Symptom>,
+        passPhrase: String,
+        completion: Completion?
+    ) {
         EndlessMedicalApiInstance.api.initSession(
             API_KEY,
             API_HOST
@@ -74,13 +80,14 @@ class ApplicationActivityViewModel : ViewModel() {
                     acceptTerms(
                         response.body()!!,
                         symptomList,
-                        passPhrase = passPhrase
+                        passPhrase = passPhrase,
+                        completion
                     )
                 }
             }
 
             override fun onFailure(call: Call<SessionResponse?>, t: Throwable) {
-                e("init status error", t.message.toString())
+                completion?.onCancelled(name = "init error", t.message.toString())
             }
         })
     }
@@ -88,7 +95,8 @@ class ApplicationActivityViewModel : ViewModel() {
     private fun acceptTerms(
         sessionResponse: SessionResponse,
         symptomList: List<Symptom>,
-        passPhrase: String
+        passPhrase: String,
+        completion: Completion?
     ) {
         EndlessMedicalApiInstance.api.acceptTerms(
             API_KEY,
@@ -102,31 +110,40 @@ class ApplicationActivityViewModel : ViewModel() {
                 ) {
                     if (response.body() != null) {
                         termsStat.value = response.body()!!.status
-                        postSymptomList(symptomList = symptomList)
+                        postSymptomList(symptomList = symptomList, completion)
                     }
                 }
 
                 override fun onFailure(call: Call<TermsResponse?>, t: Throwable) {
                     e("accept terms", t.message.toString())
+                    completion?.onCancelled()
                 }
             })
 
 
     }
 
-    private fun postSymptomList(symptomList: List<Symptom>) {
+    private fun postSymptomList(
+        symptomList: List<Symptom>,
+        completion: Completion?
+    ) {
         for (symptom in symptomList) {
             val r = postSymptom(Feature(status.value!!.SessionID, symptom.value, symptom.name))
             if (r != "ok") {
+                completion?.onCancelled()
                 e("post error", r)
                 return
             }
         }
-        getAnalysis(status.value!!.SessionID)
+        getAnalysis(status.value!!.SessionID, completion)
     }
 
-    fun getResult(symptomList: List<Symptom>, passPhrase: String) {
-        getStatus(symptomList, passPhrase)
+    fun getResult(
+        symptomList: List<Symptom>,
+        passPhrase: String,
+        completion: Completion? = null
+    ) {
+        getStatus(symptomList, passPhrase, completion)
     }
 
     private fun postSymptom(feature: Feature): String {
@@ -156,7 +173,7 @@ class ApplicationActivityViewModel : ViewModel() {
         return ret
     }
 
-    private fun getAnalysis(sessionID: String) {
+    private fun getAnalysis(sessionID: String, completion: Completion?) {
         EndlessMedicalApiInstance.api.getAnalysis(
             API_KEY,
             API_HOST,
@@ -166,31 +183,41 @@ class ApplicationActivityViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     analysisJson.value = Gson().toJson(response.body())
                     len.value = convertToJSONObject(analysisJson.value!!)
-                    getDiseases(analysisJson.value!!)
+                    getDiseases(analysisJson.value!!, completion)
                 }
             }
 
             override fun onFailure(call: Call<Any?>, t: Throwable) {
                 e("error analysis", t.message.toString())
+                completion?.onCancelled()
             }
         })
     }
 
-    fun getDiseases(jsonString: String) {
-        val list: ArrayList<Disease> = ArrayList()
-        val jsonObject = JSONObject(jsonString)
-        val jsonArray = jsonObject.getJSONArray("Diseases")
-        var len = jsonArray.length()
-        if (len != 0) {
-            len -= 1
-            for (i in 0..len) {
-                val obj = jsonArray.getJSONObject(i)
-                val key = obj.keys().next()
-                val disease = Disease(key, obj.getString(key))
-                list.add(disease)
+    fun getDiseases(
+        jsonString: String,
+        completion: Completion?
+    ) {
+        try {
+            val list: ArrayList<Disease> = ArrayList()
+            val jsonObject = JSONObject(jsonString)
+            val jsonArray = jsonObject.getJSONArray("Diseases")
+            var len = jsonArray.length()
+            if (len != 0) {
+                len -= 1
+                for (i in 0..len) {
+                    val obj = jsonArray.getJSONObject(i)
+                    val key = obj.keys().next()
+                    val disease = Disease(key, obj.getString(key))
+                    list.add(disease)
+                }
             }
+            diseaseList.value = list
+            completion?.onComplete()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+            completion?.onCancelled()
         }
-        diseaseList.value = list
     }
 
     fun convertToJSONObject(jsonString: String): String {
@@ -217,7 +244,7 @@ class ApplicationActivityViewModel : ViewModel() {
         return featuresAsSurveyItem
     }
 
-    fun observeDiseases(): LiveData<ArrayList<Disease>>{
+    fun observeDiseases(): LiveData<ArrayList<Disease>> {
         return diseaseList
     }
 

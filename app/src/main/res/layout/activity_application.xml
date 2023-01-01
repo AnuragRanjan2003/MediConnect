@@ -56,14 +56,15 @@
         app:layout_constraintTop_toBottomOf="@+id/drop_down"
         tools:listitem="@layout/symptom_rec_item" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/testing"
+
+    <include
+        android:id="@+id/btn_submit"
+        layout="@layout/submit_animated_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="25dp"
-        android:contentDescription="post"
-        android:src="@drawable/ic_baseline_done_outline_24"
         android:layout_marginBottom="20dp"
+        android:layout_marginEnd="30dp"
+        android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

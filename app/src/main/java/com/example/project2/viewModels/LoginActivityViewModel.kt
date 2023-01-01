@@ -57,7 +57,7 @@ class LoginActivityViewModel : ViewModel() {
     }
 
     fun loginWithGoogle(button: AnimatedButton, activity: AppCompatActivity): Intent {
-        button.clicked()
+        button.activate()
         val googleSignInClient = GoogleSignIn.getClient(activity, gso)
         return googleSignInClient.signInIntent
 
@@ -94,7 +94,7 @@ class LoginActivityViewModel : ViewModel() {
             else {
                 Snackbar.make(binding.root, it.exception?.message.toString(), Snackbar.LENGTH_LONG)
                     .show()
-                button.clicked()
+                button.deactivate()
             }
         }
     }
@@ -111,7 +111,7 @@ class LoginActivityViewModel : ViewModel() {
             activity.finishAffinity()
         }
             .addOnFailureListener {
-                button.clicked()
+                button.deactivate()
                 Snackbar.make(binding.root, it.message.toString(), Snackbar.LENGTH_LONG).show()
             }
     }

@@ -1,28 +1,61 @@
 package com.example.project2
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log.d
 import android.util.Log.e
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project2.adapters.SurveyRecAdapter
 import com.example.project2.databinding.ActivityApplicationBinding
+import com.example.project2.models.Disease
+import com.example.project2.models.SaveDataModel
 import com.example.project2.models.SurveyItem
+import com.example.project2.uiComponents.AnimatedButton
 import com.example.project2.viewModels.ApplicationActivityViewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class ApplicationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityApplicationBinding
     private lateinit var adapter: SurveyRecAdapter
     private lateinit var list: ArrayList<SurveyItem>
     private lateinit var viewModel: ApplicationActivityViewModel
+    private lateinit var animatedButton: AnimatedButton
+    private lateinit var submitButton: View
+    private var diseaseList = ArrayList<Disease>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityApplicationBinding.inflate(layoutInflater)
         setContentView(binding.root)
         list = ArrayList()
         viewModel = ViewModelProvider(this)[ApplicationActivityViewModel::class.java]
+        submitButton = findViewById(R.id.btn_submit)
+        animatedButton = AnimatedButton(
+            text = "Submit",
+            changeText = "please wait..",
+            icon = AppCompatResources.getDrawable(this, R.drawable.ic_baseline_done_outline_24)!!,
+            view = submitButton,
+            textColor = resources.getColor(R.color.md_theme_light_onSurfaceVariant, null),
+            completion = object : Completion {
+                override fun onComplete() {
+                    onSubmitClick()
+                }
+
+                override fun onCancelled(name: String, message: String) {
+                    e(name, message)
+                }
+
+
+            }
+        )
 
         viewModel.getFeatures()
         viewModel.observeFeatures().observe(this) { d("Feature response", "$it") }
@@ -33,7 +66,11 @@ class ApplicationActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         }
 
-        viewModel.observeDiseases().observe(this) { e("Diseases", "$it") }
+        viewModel.observeDiseases().observe(this) {
+            diseaseList.clear()
+            diseaseList.addAll(it)
+        }
+
 //        val item1 = SurveyItem("Heading 1", "content 1")
 //        val item2 = SurveyItem("Heading 2", "content 2")
 //        list = ArrayList(listOf(item1, item2))
@@ -43,15 +80,83 @@ class ApplicationActivity : AppCompatActivity() {
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.symptomsRec.hasFixedSize()
         binding.symptomsRec.adapter = this.adapter
-        binding.testing.setOnClickListener {
-            e("survey list", "${adapter.getList()}")
-            if(adapter.getList().isNotEmpty())
-                viewModel.getResult(adapter.getList(), getString(R.string.passPhrase))
-            else
-                e("Diseases","no symptoms reported")
-        }
+
         binding.etSearch.doAfterTextChanged { adapter.filter.filter(it.toString()) }
 
+        submitButton.setOnClickListener {
+            animatedButton.activate()
+        }
+
+
+    }
+
+    private fun onSubmitClick() {
+        e("survey list", "${adapter.getList()}")
+        if (adapter.getList().isNotEmpty())
+            viewModel.getResult(
+                adapter.getList(),
+                getString(R.string.passPhrase),
+                completion = object : Completion {
+                    override fun onComplete() {
+                        processData(diseaseList)
+                    }
+
+                    override fun onCancelled(name: String, message: String) {
+                        e(name, message)
+                        animatedButton.deactivate()
+                    }
+                }
+            )
+        else {
+            e("Diseases", "no symptoms reported")
+            animatedButton.deactivate()
+        }
+
+    }
+
+    private fun saveData(model: SaveDataModel) {
+        Firebase.database.getReference("Reports").child(Firebase.auth.currentUser!!.uid)
+            .child(makeName()).setValue(model).addOnSuccessListener {
+                startActivity(Intent(this@ApplicationActivity, AnalysisActivity::class.java))
+            }.addOnFailureListener {
+                e("data saving error", it.message.toString())
+                animatedButton.deactivate()
+            }
+
+    }
+
+    private fun convertToSaveDataModel(list: List<Disease>): SaveDataModel {
+        val nameList = ArrayList<String>()
+        val probList = ArrayList<String>()
+        for (i in 0..2) {
+            val item = list[i]
+            nameList.add(item.name)
+            probList.add(item.probability)
+        }
+        val date = makeName()
+        return SaveDataModel(
+            nameList[0],
+            probList[0],
+            nameList[1],
+            probList[1],
+            nameList[2],
+            probList[2],
+            date = date
+        )
+    }
+
+    private fun makeName(): String {
+        val format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
+        return LocalDateTime.now().format(format)
+    }
+
+    private fun processData(list: ArrayList<Disease>) {
+        e(
+            this@ApplicationActivity.localClassName,
+            "analysis finished : $diseaseList"
+        )
+        val model = convertToSaveDataModel(list)
+        saveData(model)
     }
 
 
