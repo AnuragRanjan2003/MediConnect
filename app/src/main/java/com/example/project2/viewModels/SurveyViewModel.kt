@@ -16,8 +16,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-private const val API_KEY = "8d1c079557mshfad6e967741145dp1026f1jsnf8e1854363fb"
-private const val API_HOST = "endlessmedicalapi1.p.rapidapi.com"
+const val API_KEY = "8d1c079557mshfad6e967741145dp1026f1jsnf8e1854363fb"
+const val API_HOST = "endlessmedicalapi1.p.rapidapi.com"
 
 class SurveyViewModel : ViewModel() {
 

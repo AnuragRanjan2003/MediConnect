@@ -1,6 +1,7 @@
 package com.example.project2.api
 
 import com.example.project2.models.Terms.TermsResponse
+import com.example.project2.models.features.FeatureResponse
 import com.example.project2.models.initSession.SessionResponse
 import retrofit2.Call
 import retrofit2.http.*
@@ -21,7 +22,7 @@ interface EndlessMedicalApi {
         @Header("X-RapidAPI-Host")
         hostKey: String,
         @Query("passphrase")
-        passPhrase : String,
+        passPhrase: String,
         @Query("SessionID")
         sessionId: String
 
@@ -51,6 +52,14 @@ interface EndlessMedicalApi {
         @Query("SessionID")
         sessionId: String
     ): Call<Any>
+
+    @GET("/GetFeatures")
+    fun getFeatures(
+        @Header("X-RapidAPI-Key")
+        apiKey: String,
+        @Header("X-RapidAPI-Host")
+        hostKey: String
+    ) : Call<FeatureResponse>
 
 
 }
