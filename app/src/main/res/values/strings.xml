@@ -11,7 +11,7 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder heading -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="passPhrase">"I have read, understood and I accept and agree to comply with the Terms of Use of EndlessMedicalAPI and Endless Medical services. The Terms of Use are available on endlessmedical.com"</string>
     <string-array name="menu_items">
@@ -19,4 +19,5 @@
         <item>Item 2</item>
         <item>Item 3</item>
     </string-array>
+    <string name="disclaimer">The results are obtained using the EndlessMedical API and are based upon the current AI model developed by them.</string>
 </resources>

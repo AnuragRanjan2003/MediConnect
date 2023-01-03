@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true">
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
@@ -15,8 +16,9 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:background="@drawable/outlined_box"
             android:paddingStart="24sp"
             android:paddingTop="5dp"

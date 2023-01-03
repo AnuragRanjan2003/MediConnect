@@ -15,8 +15,9 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:background="@drawable/primary_outline_box"
             android:paddingStart="24sp"
             android:paddingTop="10dp"

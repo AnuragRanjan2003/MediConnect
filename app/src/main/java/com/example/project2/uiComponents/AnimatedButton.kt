@@ -1,7 +1,10 @@
 package com.example.project2.uiComponents
 
+import android.animation.LayoutTransition
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -28,6 +31,7 @@ class AnimatedButton(
     private val iconEnabled: Boolean
     private val textColor: Int
     private val comp: Completion?
+    private val pb: ProgressBar
 
 
     init {
@@ -40,7 +44,8 @@ class AnimatedButton(
         this.iconEnabled = iconEnabled
         this.textColor = textColor
         comp = completion
-
+        pb = view.findViewById(R.id.prg)
+        cl.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
         button.findViewById<TextView>(R.id.text).text = text
         button.findViewById<TextView>(R.id.text).setTextColor(textColor)
         button.findViewById<ImageView>(R.id.icon).setImageDrawable(icon)
@@ -55,7 +60,7 @@ class AnimatedButton(
     fun activate() {
 
         button.findViewById<TextView>(R.id.text).text = changeText
-        button.findViewById<ProgressBar>(R.id.prg).visibility = View.VISIBLE
+        animate(true)
         comp?.onComplete()
 
     }
@@ -63,9 +68,17 @@ class AnimatedButton(
     fun deactivate() {
 
         button.findViewById<TextView>(R.id.text).text = text
-        button.findViewById<ProgressBar>(R.id.prg).visibility = View.GONE
+        animate(false)
         comp?.onCancelled(name = "button", message = "cancelled")
 
+    }
+
+    private fun animate(expand: Boolean) {
+        pb.visibility = when (expand) {
+            true -> View.VISIBLE
+            else -> View.GONE
+        }
+        TransitionManager.beginDelayedTransition(cl, AutoTransition())
     }
 
 

@@ -34,6 +34,8 @@ class SurveyRecAdapter(surveyList: ArrayList<SurveyItem>, context: Context) :
         val chipNone: Chip = itemView.findViewById(R.id.chip_none)
         val chipMid: Chip = itemView.findViewById(R.id.chip_mid)
         val chipHigh: Chip = itemView.findViewById(R.id.chip_high)
+
+
     }
 
     class EditFieldViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -98,6 +100,7 @@ class SurveyRecAdapter(surveyList: ArrayList<SurveyItem>, context: Context) :
         }
     }
 
+
     private fun bindForEditField(holder: EditFieldViewHolder, position: Int) {
         val item = surveyList[position]
         holder.heading.text = item.heading
@@ -131,7 +134,7 @@ class SurveyRecAdapter(surveyList: ArrayList<SurveyItem>, context: Context) :
             "mid" -> temp.value = "20"
             "high" -> temp.value = "50"
         }
-        return Symptom(temp.heading,temp.value)
+        return Symptom(temp.heading, temp.value)
     }
 
     override fun getFilter(): Filter {
@@ -147,11 +150,11 @@ class SurveyRecAdapter(surveyList: ArrayList<SurveyItem>, context: Context) :
             } else {
                 val query = constraint.toString().trim()
                 for (item in fullList) {
-                    if (item.heading.contains(query,true))
+                    if (item.heading.contains(query, true))
                         filteredList.add(item)
                 }
             }
-            val results =  FilterResults()
+            val results = FilterResults()
             results.values = filteredList
             return results
         }

@@ -115,15 +115,19 @@ class ApplicationActivity : AppCompatActivity() {
     }
 
     private fun saveData(model: SaveDataModel) {
+        val name = makeName()
         Firebase.database.getReference("Reports").child(Firebase.auth.currentUser!!.uid)
-            .child(makeName()).setValue(model).addOnSuccessListener {
-                startActivity(Intent(this@ApplicationActivity, AnalysisActivity::class.java))
+            .child(name).setValue(model).addOnSuccessListener {
+                val intent = Intent(this@ApplicationActivity, AnalysisActivity::class.java)
+                intent.putExtra("name", name)
+                startActivity(intent)
             }.addOnFailureListener {
                 e("data saving error", it.message.toString())
                 animatedButton.deactivate()
             }
 
     }
+
 
     private fun convertToSaveDataModel(list: List<Disease>): SaveDataModel {
         val nameList = ArrayList<String>()
@@ -135,13 +139,13 @@ class ApplicationActivity : AppCompatActivity() {
         }
         val date = makeName()
         return SaveDataModel(
-            nameList[0],
-            probList[0],
-            nameList[1],
-            probList[1],
-            nameList[2],
-            probList[2],
-            date = date
+            date = date,
+            dname1 = nameList[0],
+            dname2 = nameList[1],
+            dname3 = nameList[2],
+            prob1 = probList[0],
+            prob2 = probList[1],
+            prob3 = probList[2]
         )
     }
 
