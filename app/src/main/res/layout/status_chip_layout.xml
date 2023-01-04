@@ -10,6 +10,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         app:cardCornerRadius="5dp"
+        android:id="@+id/card1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

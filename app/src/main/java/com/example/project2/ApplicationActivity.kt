@@ -45,7 +45,7 @@ class ApplicationActivity : AppCompatActivity() {
             view = submitButton,
             textColor = resources.getColor(R.color.md_theme_light_onSurfaceVariant, null),
             completion = object : Completion {
-                override fun onComplete() {
+                override fun onComplete(dataModel: SaveDataModel) {
                     onSubmitClick()
                 }
 
@@ -97,7 +97,7 @@ class ApplicationActivity : AppCompatActivity() {
                 adapter.getList(),
                 getString(R.string.passPhrase),
                 completion = object : Completion {
-                    override fun onComplete() {
+                    override fun onComplete(dataModel: SaveDataModel) {
                         processData(diseaseList)
                     }
 
@@ -121,6 +121,7 @@ class ApplicationActivity : AppCompatActivity() {
                 val intent = Intent(this@ApplicationActivity, AnalysisActivity::class.java)
                 intent.putExtra("name", name)
                 startActivity(intent)
+                finishAffinity()
             }.addOnFailureListener {
                 e("data saving error", it.message.toString())
                 animatedButton.deactivate()

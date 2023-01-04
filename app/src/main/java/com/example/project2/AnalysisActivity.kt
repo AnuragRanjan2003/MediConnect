@@ -47,7 +47,7 @@ class AnalysisActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[AnalysisActivityViewModel::class.java]
 
         val comp = object : Completion {
-            override fun onComplete() {}
+            override fun onComplete(dataModel: SaveDataModel) {}
 
             override fun onCancelled(name: String, message: String) {
                 e(name, message)
@@ -61,15 +61,15 @@ class AnalysisActivity : AppCompatActivity() {
         }
 
         viewModel.observeDetail1().observe(this) {
-            e(this.localClassName,"result1: $it")
+            e(this.localClassName, "result1: $it")
             card1.setDetail(getDescription(it))
         }
         viewModel.observeDetail2().observe(this) {
-            e(this.localClassName,"result2: $it")
+            e(this.localClassName, "result2: $it")
             card2.setDetail(getDescription(it))
         }
         viewModel.observeDetail3().observe(this) {
-            e(this.localClassName,"result3: $it")
+            e(this.localClassName, "result3: $it")
             card3.setDetail(getDescription(it))
         }
 
@@ -104,8 +104,6 @@ class AnalysisActivity : AppCompatActivity() {
         val body = wikiResult.pages[0].excerpt
         return Html.fromHtml(body, Html.FROM_HTML_MODE_LEGACY)
     }
-
-
 
 
 }

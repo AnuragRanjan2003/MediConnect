@@ -9,7 +9,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="10dp">
+        android:paddingTop="10dp"
+        android:background="@color/def_back">
 
         <TextView
             android:id="@+id/textView8"
@@ -77,6 +78,8 @@
             android:id="@+id/his_rec"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

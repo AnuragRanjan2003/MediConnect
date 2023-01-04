@@ -3,6 +3,7 @@ package com.example.project2.uiComponents
 import android.content.Context
 import android.view.View
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.project2.R
 
@@ -13,13 +14,16 @@ const val DAN = "danger"
 class StatusChip(view: View, context: Context) {
     private val text: TextView
     private val chip: View
+    private val card : CardView
     private val cl: ConstraintLayout
     private val activity: Context
 
     init {
         chip = view
-        text = chip.findViewById(R.id.status)
-        cl = chip.findViewById(R.id.cl1)
+        card = chip.findViewById(R.id.card1)
+        cl = card.findViewById(R.id.cl1)
+        text = cl.findViewById(R.id.status)
+
         activity = context
     }
 
