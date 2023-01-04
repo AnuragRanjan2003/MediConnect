@@ -45,7 +45,7 @@ class ApplicationActivity : AppCompatActivity() {
             view = submitButton,
             textColor = resources.getColor(R.color.md_theme_light_onSurfaceVariant, null),
             completion = object : Completion {
-                override fun onComplete(dataModel: SaveDataModel) {
+                override fun onComplete(dataModel: SaveDataModel,position:Int) {
                     onSubmitClick()
                 }
 
@@ -97,7 +97,7 @@ class ApplicationActivity : AppCompatActivity() {
                 adapter.getList(),
                 getString(R.string.passPhrase),
                 completion = object : Completion {
-                    override fun onComplete(dataModel: SaveDataModel) {
+                    override fun onComplete(dataModel: SaveDataModel,position:Int) {
                         processData(diseaseList)
                     }
 

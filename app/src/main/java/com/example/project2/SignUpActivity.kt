@@ -26,6 +26,7 @@ class SignUpActivity : AppCompatActivity() {
         binding.etPass.doAfterTextChanged { viewModel.pass.value = it.toString() }
         binding.etName.doAfterTextChanged { viewModel.name.value = it.toString() }
 
+
         binding.picture.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
@@ -48,6 +49,7 @@ class SignUpActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK && it.data != null) {
                 binding.done.visibility = View.VISIBLE
+                viewModel.uriAvail.value = true
                 viewModel.uri.value = it.data!!.data
             }
         }

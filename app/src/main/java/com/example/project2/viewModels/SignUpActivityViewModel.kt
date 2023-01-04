@@ -21,6 +21,7 @@ class SignUpActivityViewModel : ViewModel() {
     val pass: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val name: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val uri: MutableLiveData<Uri> by lazy { MutableLiveData<Uri>() }
+    val uriAvail = MutableLiveData<Boolean>(false)
     private val mAuth = Firebase.auth
     private val database = Firebase.database
     private val storage = Firebase.storage
@@ -38,7 +39,7 @@ class SignUpActivityViewModel : ViewModel() {
             binding.etName.error = "Please provide Name"
             binding.prg.visibility = View.GONE
             return
-        } else if (uri == null) {
+        } else if (uriAvail.value==false) {
             binding.prg.visibility = View.GONE
             Snackbar.make(binding.root, "No profile image selected", Snackbar.LENGTH_LONG).show()
             return

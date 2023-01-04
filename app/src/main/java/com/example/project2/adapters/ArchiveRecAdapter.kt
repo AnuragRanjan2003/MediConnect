@@ -19,18 +19,18 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import java.text.SimpleDateFormat
 import kotlin.math.floor
 
-class HistoryRecAdapter(list: ArrayList<SaveDataModel>, context: Context, completion: Completion) :
-    RecyclerView.Adapter<HistoryRecAdapter.MyViewHolder>() {
-    private var list: ArrayList<SaveDataModel>
+class ArchiveRecAdapter(list: ArrayList<SaveDataModel>, context: Context, completion: Completion ,completion2: Completion) :
+    RecyclerView.Adapter<ArchiveRecAdapter.MyViewHolder>() {
+    private val list: ArrayList<SaveDataModel>
     private val context: Context
-    private var loading: Boolean
     private val completion: Completion
+    private val completion2: Completion
 
     init {
         this.list = list
         this.context = context
-        this.loading = true
         this.completion = completion
+        this.completion2 = completion2
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -51,8 +51,6 @@ class HistoryRecAdapter(list: ArrayList<SaveDataModel>, context: Context, comple
             value = cl.findViewById(R.id.value2)
             chip = cl.findViewById(R.id.status_chip)
         }
-
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -64,28 +62,26 @@ class HistoryRecAdapter(list: ArrayList<SaveDataModel>, context: Context, comple
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val statusChip = StatusChip(holder.chip, context)
 
-        if (loading) {
-            holder.cl.visibility = View.INVISIBLE
-            holder.placeholder.visibility = View.VISIBLE
-            holder.placeholder.startShimmer()
-        } else {
-            holder.placeholder.stopShimmer()
-            holder.placeholder.visibility = View.INVISIBLE
-            holder.cl.visibility = View.VISIBLE
+        val item = list[position]
+        holder.placeholder.stopShimmer()
+        holder.placeholder.visibility = View.INVISIBLE
+        holder.cl.visibility = View.VISIBLE
 
-            val item = list[position]
-            holder.date.text = getDate(item.date)
-            holder.name.text = item.dname1
-            val v = floor(item.prob1.toDouble() * 100).toInt()
-            holder.value.text = "$v %"
+        holder.date.text = getDate(item.date)
+        holder.name.text = item.dname1
+        val v = floor(item.prob1?.toDouble()!! * 100).toInt()
+        holder.value.text = "$v %"
 
-            statusChip.setText(getStatus(v))
-            holder.card.setOnClickListener {
-                completion.onComplete(item)
-            }
+        statusChip.setText(getStatus(v))
+
+        holder.card.setOnLongClickListener {
+            completion.onComplete(item, position)
+            return@setOnLongClickListener true
         }
 
-
+        holder.card.setOnClickListener {
+            completion2.onComplete(item,position)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -100,10 +96,5 @@ class HistoryRecAdapter(list: ArrayList<SaveDataModel>, context: Context, comple
         val date = SimpleDateFormat("dd-MM-yyyy HH:mm").parse(dateString)
         val format = SimpleDateFormat("dd-MM-yyyy")
         return format.format(date)
-    }
-
-    fun endLoading() {
-        this.loading = false
-        notifyDataSetChanged()
     }
 }

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +17,7 @@ import com.example.project2.adapters.HistoryRecAdapter
 import com.example.project2.databinding.FragmentHomeBinding
 import com.example.project2.models.SaveDataModel
 import com.example.project2.viewModels.HistoryFragmentViewModel
+import com.example.project2.viewModels.MainActivityViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -45,6 +47,7 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: HistoryRecAdapter
     private val list = ArrayList<SaveDataModel>()
+    private val sharedViewModel: MainActivityViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +65,7 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this)[HistoryFragmentViewModel::class.java]
         adapter = HistoryRecAdapter(list, requireActivity().baseContext, object : Completion {
-            override fun onComplete(dataModel: SaveDataModel) {
+            override fun onComplete(dataModel: SaveDataModel,pos: Int) {
                 val intent = Intent(activity, AnalysisActivity::class.java)
                 intent.putExtra("name", dataModel.date)
                 activity?.startActivity(intent)
@@ -73,11 +76,18 @@ class HomeFragment : Fragment() {
             }
         })
         viewModel.getData()
-        viewModel.observeData().observe(viewLifecycleOwner) {
+
+        viewModel.observeData().observe(viewLifecycleOwner) { sharedViewModel.setList(it) }
+
+        viewModel.observeFilteredList().observe(viewLifecycleOwner) {
             list.clear()
             list.addAll(it)
             adapter.endLoading()
             adapter.notifyDataSetChanged()
+        }
+
+        viewModel.observeUnFilteredList().observe(viewLifecycleOwner) {
+            sharedViewModel.setFilteredList(it)
         }
 
         binding.hisRec.layoutManager =
@@ -85,7 +95,8 @@ class HomeFragment : Fragment() {
         binding.hisRec.hasFixedSize()
         binding.hisRec.adapter = this.adapter
 
-        val simpleCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        val simpleCallback = object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -98,7 +109,7 @@ class HomeFragment : Fragment() {
                 val pos = viewHolder.adapterPosition
                 when (direction) {
                     ItemTouchHelper.LEFT -> deleteItem(pos)
-                    else -> {}
+                    else -> archiveItem(pos)
                 }
             }
 
@@ -120,16 +131,29 @@ class HomeFragment : Fragment() {
                     actionState,
                     isCurrentlyActive
                 )
-                    .addBackgroundColor(
+                    .addSwipeLeftBackgroundColor(
                         activity!!.resources.getColor(
                             R.color.md_theme_light_error,
                             null
                         )
                     )
-                    .addActionIcon(R.drawable.ic_baseline_delete_24)
-                    .setActionIconTint(
+                    .addSwipeLeftActionIcon(R.drawable.ic_baseline_delete_24)
+                    .setSwipeLeftActionIconTint(
                         activity!!.resources.getColor(
                             R.color.md_theme_light_onError,
+                            null
+                        )
+                    )
+                    .addSwipeRightBackgroundColor(
+                        activity!!.resources.getColor(
+                            R.color.green_deep,
+                            null
+                        )
+                    )
+                    .addSwipeRightActionIcon(R.drawable.ic_baseline_archive_24)
+                    .setActionIconTint(
+                        activity!!.resources.getColor(
+                            R.color.md_theme_light_onPrimary,
                             null
                         )
                     )
@@ -160,7 +184,7 @@ class HomeFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 Firebase.database.getReference("Reports").child(Firebase.auth.currentUser!!.uid)
-                    .child(item.date!!).removeValue().await()
+                    .child(item.date).removeValue().await()
                 launch(Dispatchers.Main) {
                     adapter.notifyItemRemoved(pos)
                     Snackbar.make(binding.root, "deleted", Snackbar.LENGTH_LONG).show()
@@ -173,6 +197,27 @@ class HomeFragment : Fragment() {
         }
 
 
+    }
+
+    private fun archiveItem(pos: Int) {
+        val item = list[pos]
+        list.remove(item)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                Firebase.database.getReference("Reports").child(Firebase.auth.currentUser!!.uid)
+                    .child(item.date)
+                    .child("archive")
+                    .setValue(true)
+                    .await()
+            } catch (e: java.lang.Exception) {
+                e(this@HomeFragment.tag, e.message.toString())
+            }
+            launch(Dispatchers.Main) {
+                adapter.notifyItemRemoved(pos)
+                Snackbar.make(binding.root, "archived", Snackbar.LENGTH_LONG).show()
+            }
+        }
     }
 
 

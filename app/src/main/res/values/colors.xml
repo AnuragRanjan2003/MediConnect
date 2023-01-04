@@ -65,5 +65,6 @@
     <color name="yellow_text">#ffbe34</color>
     <color name="green_light">#eaf8f3</color>
     <color name="green_text">#80cfb2</color>
+    <color name="green_deep">#13B428</color>
     <color name="def_back">#F7F7F8</color>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.project2
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Html
 import android.text.Spanned
@@ -47,7 +48,7 @@ class AnalysisActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[AnalysisActivityViewModel::class.java]
 
         val comp = object : Completion {
-            override fun onComplete(dataModel: SaveDataModel) {}
+            override fun onComplete(dataModel: SaveDataModel,position:Int) {}
 
             override fun onCancelled(name: String, message: String) {
                 e(name, message)
@@ -77,9 +78,9 @@ class AnalysisActivity : AppCompatActivity() {
     }
 
     private fun putValue(saveDataModel: SaveDataModel) {
-        card1.setValue(h = saveDataModel.dname1!!, v = parseToValue(saveDataModel.prob1!!))
-        card2.setValue(h = saveDataModel.dname2!!, v = parseToValue(saveDataModel.prob2!!))
-        card3.setValue(h = saveDataModel.dname3!!, v = parseToValue(saveDataModel.prob3!!))
+        card1.setValue(h = saveDataModel.dname1, v = parseToValue(saveDataModel.prob1))
+        card2.setValue(h = saveDataModel.dname2, v = parseToValue(saveDataModel.prob2))
+        card3.setValue(h = saveDataModel.dname3, v = parseToValue(saveDataModel.prob3))
         qList.clear()
         qList.addAll(
             listOfNotNull(
@@ -103,6 +104,12 @@ class AnalysisActivity : AppCompatActivity() {
     private fun getExcerpt(wikiResult: WikiResult): Spanned? {
         val body = wikiResult.pages[0].excerpt
         return Html.fromHtml(body, Html.FROM_HTML_MODE_LEGACY)
+    }
+
+    override fun onBackPressed() {
+        startActivity(Intent(this,MainActivity::class.java))
+        finishAffinity()
+        super.onBackPressed()
     }
 
 

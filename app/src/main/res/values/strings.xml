@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Project 2</string>
+    <string name="app_name">MediConnect</string>
     <string name="web_client_id">99593684623-qv422jv6ibmrjafgn6onuulucmmk56ue.apps.googleusercontent.com</string>
     <string name="android_client_id">99593684623-7iccah60i1shetk8341j5jvbgpt12me2.apps.googleusercontent.com</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
