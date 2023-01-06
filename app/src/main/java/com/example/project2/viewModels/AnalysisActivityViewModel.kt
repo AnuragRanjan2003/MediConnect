@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project2.Completion
 import com.example.project2.models.SaveDataModel
+import com.example.project2.models.features.FeaturesError
 import com.example.project2.models.wiki.WikiResult
 import com.example.project2.repo.WikiApiInstance
 import com.google.firebase.auth.ktx.auth
@@ -24,6 +25,7 @@ class AnalysisActivityViewModel : ViewModel() {
     private val details2: MutableLiveData<WikiResult> by lazy { MutableLiveData<WikiResult>() }
     private val details3: MutableLiveData<WikiResult> by lazy { MutableLiveData<WikiResult>() }
     private val list = listOf(details1, details2, details3)
+    private val errors = FeaturesError()
 
     fun getResults(name: String, comp: Completion) {
         Firebase.database.getReference("Reports").child(Firebase.auth.currentUser!!.uid).child(name)
@@ -46,7 +48,8 @@ class AnalysisActivityViewModel : ViewModel() {
 
     private fun getResultFor(i: Int, qlist: ArrayList<String>) {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = WikiApiInstance.api.getResult(qlist[i], 1)
+
+            val response = WikiApiInstance.api.getResult(errors.correctName(qlist[i]), 1)
             if (response.isSuccessful) {
                 launch(Dispatchers.Main) {
                     list[i].value = response.body()

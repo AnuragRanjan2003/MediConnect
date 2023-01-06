@@ -1,6 +1,7 @@
 package com.example.project2
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Html
 import android.text.Spanned
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.project2.databinding.ActivityAnalysisBinding
 import com.example.project2.models.SaveDataModel
+import com.example.project2.models.features.FeaturesError
 import com.example.project2.models.wiki.WikiResult
 import com.example.project2.uiComponents.ExpandableCard
 import com.example.project2.viewModels.AnalysisActivityViewModel
@@ -25,30 +27,36 @@ class AnalysisActivity : AppCompatActivity() {
     private lateinit var viewCard2: View
     private lateinit var viewCard3: View
     private var qList = ArrayList<String>()
+    private lateinit var errors: FeaturesError
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAnalysisBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        errors = FeaturesError()
 
 
         viewCard1 = findViewById(R.id.item1)
         viewCard2 = findViewById(R.id.item2)
         viewCard3 = findViewById(R.id.item3)
 
-        card1 = ExpandableCard(view = viewCard1)
-        card2 = ExpandableCard(view = viewCard2)
-        card3 = ExpandableCard(view = viewCard3)
+        card1 = ExpandableCard(view = viewCard1, completion = search)
+        card2 = ExpandableCard(view = viewCard2, completion = search)
+        card3 = ExpandableCard(view = viewCard3, completion = search)
 
         viewCard1.setOnClickListener { card1.transition() }
         viewCard2.setOnClickListener { card2.transition() }
         viewCard3.setOnClickListener { card3.transition() }
+
+        card1.find.setOnClickListener { card1.findMore() }
+        card2.find.setOnClickListener { card2.findMore() }
+        card3.find.setOnClickListener { card3.findMore() }
 
         val name = intent.getStringExtra("name")
 
         viewModel = ViewModelProvider(this)[AnalysisActivityViewModel::class.java]
 
         val comp = object : Completion {
-            override fun onComplete(dataModel: SaveDataModel,position:Int) {}
+            override fun onComplete(dataModel: SaveDataModel, position: Int,q: String) {}
 
             override fun onCancelled(name: String, message: String) {
                 e(name, message)
@@ -98,7 +106,12 @@ class AnalysisActivity : AppCompatActivity() {
     }
 
     private fun getDescription(wikiResult: WikiResult): String {
-        return "${wikiResult.pages[0].description} ${getExcerpt(wikiResult)}"
+        return if (wikiResult.pages.isNotEmpty()) "${wikiResult.pages[0].description} ${
+            getExcerpt(
+                wikiResult
+            )
+        }" else
+            "no result found"
     }
 
     private fun getExcerpt(wikiResult: WikiResult): Spanned? {
@@ -107,9 +120,38 @@ class AnalysisActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        startActivity(Intent(this,MainActivity::class.java))
+        startActivity(Intent(this, MainActivity::class.java))
         finishAffinity()
         super.onBackPressed()
+    }
+
+    private val search = object : Completion {
+        override fun onComplete(dataModel: SaveDataModel, position: Int, q: String) {
+            val intent = Intent(Intent.ACTION_VIEW, parseToUrl(q))
+            e(localClassName, "url : ${parseToUrl(q)}")
+            startActivity(intent)
+        }
+
+        private fun parseToUrl(q: String): Uri? {
+            return Uri.parse("https://www.google.com/search?q=${queryType(q)}")
+        }
+
+        private fun queryType(q: String): String {
+            var prev = ' '
+            return q.trim()
+                .replace(' ', '+')
+                .filter { c: Char ->
+                    if (c == '+' && prev == ' ') false
+                    else {
+                        prev = c
+                        true
+                    }
+                }
+        }
+
+        override fun onCancelled(name: String, message: String) {
+            TODO("Not yet implemented")
+        }
     }
 
 

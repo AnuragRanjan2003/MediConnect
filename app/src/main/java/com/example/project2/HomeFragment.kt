@@ -65,7 +65,7 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this)[HistoryFragmentViewModel::class.java]
         adapter = HistoryRecAdapter(list, requireActivity().baseContext, object : Completion {
-            override fun onComplete(dataModel: SaveDataModel,pos: Int) {
+            override fun onComplete(dataModel: SaveDataModel,pos: Int,q:String) {
                 val intent = Intent(activity, AnalysisActivity::class.java)
                 intent.putExtra("name", dataModel.date)
                 activity?.startActivity(intent)

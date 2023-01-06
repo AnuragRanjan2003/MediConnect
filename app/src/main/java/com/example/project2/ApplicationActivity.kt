@@ -45,7 +45,7 @@ class ApplicationActivity : AppCompatActivity() {
             view = submitButton,
             textColor = resources.getColor(R.color.md_theme_light_onSurfaceVariant, null),
             completion = object : Completion {
-                override fun onComplete(dataModel: SaveDataModel,position:Int) {
+                override fun onComplete(dataModel: SaveDataModel, position: Int,q: String) {
                     onSubmitClick()
                 }
 
@@ -63,7 +63,9 @@ class ApplicationActivity : AppCompatActivity() {
             d("Feature response", "$it")
             list.clear()
             list.addAll(it)
+            adapter.setFullList(it)
             adapter.notifyDataSetChanged()
+            adapter.logLists()
         }
 
         viewModel.observeDiseases().observe(this) {
@@ -71,9 +73,7 @@ class ApplicationActivity : AppCompatActivity() {
             diseaseList.addAll(it)
         }
 
-//        val item1 = SurveyItem("Heading 1", "content 1")
-//        val item2 = SurveyItem("Heading 2", "content 2")
-//        list = ArrayList(listOf(item1, item2))
+
 
         adapter = SurveyRecAdapter(list, this)
         binding.symptomsRec.layoutManager =
@@ -81,7 +81,7 @@ class ApplicationActivity : AppCompatActivity() {
         binding.symptomsRec.hasFixedSize()
         binding.symptomsRec.adapter = this.adapter
 
-        binding.etSearch.doAfterTextChanged { adapter.filter.filter(it.toString()) }
+        binding.etSearch.doAfterTextChanged {   adapter.filter.filter(it) }
 
         submitButton.setOnClickListener {
             animatedButton.activate()
@@ -97,7 +97,7 @@ class ApplicationActivity : AppCompatActivity() {
                 adapter.getList(),
                 getString(R.string.passPhrase),
                 completion = object : Completion {
-                    override fun onComplete(dataModel: SaveDataModel,position:Int) {
+                    override fun onComplete(dataModel: SaveDataModel, position: Int,q:String) {
                         processData(diseaseList)
                     }
 
@@ -163,6 +163,7 @@ class ApplicationActivity : AppCompatActivity() {
         val model = convertToSaveDataModel(list)
         saveData(model)
     }
+
 
 
 }

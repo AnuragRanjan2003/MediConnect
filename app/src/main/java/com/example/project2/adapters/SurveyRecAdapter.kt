@@ -19,13 +19,16 @@ import com.google.android.material.chip.Chip
 class SurveyRecAdapter(surveyList: ArrayList<SurveyItem>, context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private var surveyList: ArrayList<SurveyItem>
-    private var fullList: List<SurveyItem>
+    private lateinit var fullList: ArrayList<SurveyItem>
     private val context: Context
 
     init {
         this.surveyList = surveyList
         this.context = context
-        this.fullList = ArrayList(surveyList)
+    }
+
+    fun setFullList(list: ArrayList<SurveyItem>) {
+        fullList = list
     }
 
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -160,11 +163,18 @@ class SurveyRecAdapter(surveyList: ArrayList<SurveyItem>, context: Context) :
         }
 
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-            surveyList.clear()
+
+            this@SurveyRecAdapter.surveyList.clear()
             if (results != null)
-                surveyList.addAll(results.values as List<SurveyItem>)
+                this@SurveyRecAdapter.surveyList.addAll(results.values as List<SurveyItem>)
             notifyDataSetChanged()
         }
+
+    }
+
+    fun logLists() {
+        e("list", "$surveyList")
+        e("fullList", "$fullList")
     }
 
 

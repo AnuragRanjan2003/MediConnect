@@ -19,12 +19,12 @@ class ExpandableCard(
     completion: Completion? = null
 ) {
     private val card: View
-    private val cl: ConstraintLayout
+    val cl: ConstraintLayout
     private val textView: TextView
     private val detailsView: TextView
     private val valueView: TextView
     private val ind: ProgressBar
-    private val find: Chip
+    val find: Chip
     var expanded = false
 
     private val completion: Completion?
@@ -66,23 +66,25 @@ class ExpandableCard(
         detailsView.visibility = View.GONE
     }
 
-    fun findMedication() {
+    fun findMore() {
+        val s = textView.text.toString().trim()
         try {
-            completion?.onComplete()
+            if (!s.isNullOrBlank())
+                completion?.onComplete(q = s)
         } catch (e: java.lang.Exception) {
             completion?.onCancelled()
         }
     }
 
-    fun setValue(h:String,d:String="",v:Int){
+    fun setValue(h: String, d: String = "", v: Int) {
         textView.text = h
         valueView.text = "Chances\n$v %"
         ind.progress = v
     }
-    fun setDetail(t:String){
+
+    fun setDetail(t: String) {
         detailsView.text = t
     }
-
 
 
 }
