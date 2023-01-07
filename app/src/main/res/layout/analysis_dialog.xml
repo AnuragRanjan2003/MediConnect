@@ -45,7 +45,7 @@
                 <com.anychart.AnyChartView
                     android:id="@+id/chart"
                     android:layout_width="0dp"
-                    android:layout_height="200dp"
+                    android:layout_height="300dp"
                     android:layout_marginStart="0dp"
                     android:layout_marginEnd="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
