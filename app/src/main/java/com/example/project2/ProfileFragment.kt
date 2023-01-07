@@ -11,6 +11,7 @@ import android.util.Log.w
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -149,12 +150,23 @@ class ProfileFragment : Fragment() {
         }
 
         sharedViewModel.getFilteredList().observe(viewLifecycleOwner) { putValuesInRec(it) }
+
         sharedViewModel.getList().observe(viewLifecycleOwner) {
             listData = getDataList(it)
-            w("list222","$listData")
+            w("list222", "$listData")
             alertDialog.setOnShowListener {
-                w("list22","$listData")
-                dialog.setData(listData)
+                w("list22", "$listData")
+                val n = listData.lastIndex
+                val l = when (listData.size) {
+                    0 -> emptyList()
+                    1 -> listOf(listData[n])
+                    2 -> listOf(listData[n], listData[n - 1])
+                    else -> listOf(listData[n], listData[n - 1], listData[n - 2])
+                }
+                if (l.isNotEmpty())
+                    dialog.setData(l)
+                else Toast.makeText(activity, "no data recorded", Toast.LENGTH_SHORT).show()
+
             }
         }
 
@@ -243,27 +255,29 @@ class ProfileFragment : Fragment() {
         val map = HashMap<String, Int>()
         for (item in it) {
             if (map.contains(item.dname1)) {
-                map[item.dname1]?.plus((item.prob1.toDouble()*100).toInt())
+                map[item.dname1]?.plus((item.prob1.toDouble() * 100).toInt())
             } else {
-                map.put(item.dname1, (item.prob1.toDouble()*100).toInt())
+                map.put(item.dname1, (item.prob1.toDouble() * 100).toInt())
             }
             if (map.contains(item.dname2)) {
-                map[item.dname2]?.plus((item.prob2.toDouble()*100).toInt())
+                map[item.dname2]?.plus((item.prob2.toDouble() * 100).toInt())
             } else {
-                map.put(item.dname2, (item.prob2.toDouble()*100).toInt())
+                map.put(item.dname2, (item.prob2.toDouble() * 100).toInt())
             }
             if (map.contains(item.dname3)) {
-                map[item.dname3]?.plus((item.prob3.toDouble()*100).toInt())
+                map[item.dname3]?.plus((item.prob3.toDouble() * 100).toInt())
             } else {
-                map.put(item.dname3, (item.prob3.toDouble()*100).toInt())
+                map.put(item.dname3, (item.prob3.toDouble() * 100).toInt())
             }
 
         }
-        e("dataMap", "$map")
-        for ((n, v) in map) {
+        // sorting the map
+        val r = map.toList().sortedBy { (_, value) -> value }.toMap()
+        e("dataMap", "$r")
+        for ((n, v) in r) {
             list.add(ValueDataEntry(n, v))
         }
-        e("dataLIst", "$list")
+        e("dataList", "$list")
 
 
         return list

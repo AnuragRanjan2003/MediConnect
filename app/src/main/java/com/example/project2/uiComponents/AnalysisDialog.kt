@@ -16,7 +16,11 @@ class AnalysisDialog(pieHeading: String = "", view: AlertDialog) {
     fun setData(list: List<DataEntry>) {
         val chart: AnyChartView = view.findViewById(R.id.chart)
         val pie = AnyChart.pie()
-        pie.data(list)
-        chart.setChart(pie)
+        if (list.isNotEmpty()) {
+            pie.data(list)
+            chart.setChart(pie)
+        }else{
+
+        }
     }
 }

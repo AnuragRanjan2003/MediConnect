@@ -7,6 +7,7 @@ import android.util.Log.e
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -71,8 +72,8 @@ class HomeFragment : Fragment() {
                 activity?.startActivity(intent)
             }
 
-            override fun onCancelled(name: String, message: String) {
-                TODO("Not yet implemented")
+            override fun onCancelled(name: String, message: String){
+
             }
         })
         viewModel.getData()
@@ -87,6 +88,9 @@ class HomeFragment : Fragment() {
         }
 
         viewModel.observeUnFilteredList().observe(viewLifecycleOwner) {
+            if(it.isEmpty())
+                Toast.makeText(activity,"no unarchived records",Toast.LENGTH_SHORT).show()
+
             sharedViewModel.setFilteredList(it)
         }
 

@@ -150,7 +150,7 @@ class AnalysisActivity : AppCompatActivity() {
         }
 
         override fun onCancelled(name: String, message: String) {
-            TODO("Not yet implemented")
+
         }
     }
 

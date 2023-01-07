@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log.d
 import android.util.Log.e
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.doAfterTextChanged
@@ -109,6 +110,7 @@ class ApplicationActivity : AppCompatActivity() {
             )
         else {
             e("Diseases", "no symptoms reported")
+            Toast.makeText(this,"no symptoms reported",Toast.LENGTH_SHORT).show()
             animatedButton.deactivate()
         }
 

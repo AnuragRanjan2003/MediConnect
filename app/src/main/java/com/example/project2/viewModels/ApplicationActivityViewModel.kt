@@ -1,6 +1,7 @@
 package com.example.project2.viewModels
 
 import android.util.Log.e
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -182,7 +183,9 @@ class ApplicationActivityViewModel : ViewModel() {
             override fun onResponse(call: Call<Any?>, response: Response<Any?>) {
                 if (response.isSuccessful) {
                     analysisJson.value = Gson().toJson(response.body())
-                    len.value = convertToJSONObject(analysisJson.value!!)
+                    val x = convertToJSONObject(analysisJson.value!!)
+                    if(x.isNullOrEmpty()) return
+                    len.value = x
                     getDiseases(analysisJson.value!!, completion)
                 }
             }
@@ -220,9 +223,10 @@ class ApplicationActivityViewModel : ViewModel() {
         }
     }
 
-    fun convertToJSONObject(jsonString: String): String {
+    fun convertToJSONObject(jsonString: String): String? {
         val jsonObj = JSONObject(jsonString)
         val jsonArray = jsonObj.getJSONArray("Diseases")
+        if (jsonArray.length() == 0) return null
         val keys = jsonArray.getJSONObject(0).keys()
         return keys.next().toString()
     }
