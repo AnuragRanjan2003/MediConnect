@@ -22,13 +22,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="10dp"
-            android:paddingTop="5dp"
+            android:paddingTop="10dp"
             android:paddingEnd="10dp"
-            android:paddingBottom="5dp">
+            android:paddingBottom="10dp">
 
             <TextView
                 android:id="@+id/name1"
                 android:layout_width="70dp"
+                android:padding="3dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/placeholder_item"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -41,6 +42,7 @@
             <TextView
                 android:id="@+id/value1"
                 android:layout_width="70dp"
+                android:padding="3dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/placeholder_item"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -53,6 +55,7 @@
             <TextView
                 android:id="@+id/date1"
                 android:layout_width="70dp"
+                android:padding="3dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/placeholder_item"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -64,6 +67,7 @@
 
             <TextView
                 android:id="@+id/textView6"
+                android:padding="3dp"
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/placeholder_item"

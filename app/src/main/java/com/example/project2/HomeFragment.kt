@@ -76,6 +76,10 @@ class HomeFragment : Fragment() {
 
             }
         })
+        binding.hisRec.visibility = View.GONE
+        binding.placeholder.visibility = View.VISIBLE
+        binding.placeholder.startShimmer()
+
         viewModel.getData()
 
         viewModel.observeData().observe(viewLifecycleOwner) { sharedViewModel.setList(it) }
@@ -85,6 +89,9 @@ class HomeFragment : Fragment() {
             list.addAll(it)
             adapter.endLoading()
             adapter.notifyDataSetChanged()
+            binding.hisRec.visibility = View.VISIBLE
+            binding.placeholder.stopShimmer()
+            binding.placeholder.visibility = View.GONE
         }
 
         viewModel.observeUnFilteredList().observe(viewLifecycleOwner) {

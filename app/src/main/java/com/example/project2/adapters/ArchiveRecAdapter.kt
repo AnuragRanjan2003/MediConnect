@@ -34,7 +34,6 @@ class ArchiveRecAdapter(list: ArrayList<SaveDataModel>, context: Context, comple
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val placeholder: ShimmerFrameLayout
         val name: TextView
         val date: TextView
         val value: TextView
@@ -44,7 +43,6 @@ class ArchiveRecAdapter(list: ArrayList<SaveDataModel>, context: Context, comple
 
         init {
             card = itemView.findViewById(R.id.cardView)
-            placeholder = card.findViewById(R.id.placeholder1)
             cl = card.findViewById(R.id.cl_main)
             name = cl.findViewById(R.id.name)
             date = cl.findViewById(R.id.date)
@@ -63,8 +61,7 @@ class ArchiveRecAdapter(list: ArrayList<SaveDataModel>, context: Context, comple
         val statusChip = StatusChip(holder.chip, context)
 
         val item = list[position]
-        holder.placeholder.stopShimmer()
-        holder.placeholder.visibility = View.INVISIBLE
+
         holder.cl.visibility = View.VISIBLE
 
         holder.date.text = getDate(item.date)

@@ -9,8 +9,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="10dp"
-        android:background="@color/def_back">
+        android:background="@color/def_back"
+        android:paddingTop="10dp">
 
         <TextView
             android:id="@+id/textView8"
@@ -80,12 +80,37 @@
             android:layout_height="0dp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/materialDivider"
             tools:listitem="@layout/history_item_layout" />
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/materialDivider">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <include layout="@layout/history_item_placeholder"/>
+                <include layout="@layout/history_item_placeholder"/>
+                <include layout="@layout/history_item_placeholder"/>
+                <include layout="@layout/history_item_placeholder"/>
+                <include layout="@layout/history_item_placeholder"/>
+                <include layout="@layout/history_item_placeholder"/>
+                <include layout="@layout/history_item_placeholder"/>
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

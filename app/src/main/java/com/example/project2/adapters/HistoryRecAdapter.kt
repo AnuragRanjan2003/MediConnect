@@ -34,7 +34,6 @@ class HistoryRecAdapter(list: ArrayList<SaveDataModel>, context: Context, comple
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val placeholder: ShimmerFrameLayout
         val name: TextView
         val date: TextView
         val value: TextView
@@ -44,7 +43,6 @@ class HistoryRecAdapter(list: ArrayList<SaveDataModel>, context: Context, comple
 
         init {
             card = itemView.findViewById(R.id.cardView)
-            placeholder = card.findViewById(R.id.placeholder1)
             cl = card.findViewById(R.id.cl_main)
             name = cl.findViewById(R.id.name)
             date = cl.findViewById(R.id.date)
@@ -66,11 +64,7 @@ class HistoryRecAdapter(list: ArrayList<SaveDataModel>, context: Context, comple
 
         if (loading) {
             holder.cl.visibility = View.INVISIBLE
-            holder.placeholder.visibility = View.VISIBLE
-            holder.placeholder.startShimmer()
         } else {
-            holder.placeholder.stopShimmer()
-            holder.placeholder.visibility = View.INVISIBLE
             holder.cl.visibility = View.VISIBLE
 
             val item = list[position]

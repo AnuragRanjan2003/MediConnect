@@ -57,6 +57,7 @@ class ApplicationActivity : AppCompatActivity() {
 
             }
         )
+        binding.placeholder.startShimmer()
 
         viewModel.getFeatures()
         viewModel.observeFeatures().observe(this) { d("Feature response", "$it") }
@@ -66,6 +67,9 @@ class ApplicationActivity : AppCompatActivity() {
             list.addAll(it)
             adapter.setFullList(it)
             adapter.notifyDataSetChanged()
+            binding.symptomsRec.visibility = View.VISIBLE
+            binding.placeholder.stopShimmer()
+            binding.placeholder.visibility = View.GONE
             adapter.logLists()
         }
 

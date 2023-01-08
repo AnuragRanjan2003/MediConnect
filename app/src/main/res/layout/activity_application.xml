@@ -21,40 +21,79 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/drop_down"
+        style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense"
         android:layout_width="match_parent"
+        android:layout_height="55dp"
         android:layout_marginStart="30dp"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="30dp"
-        android:layout_height="55dp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense"
         app:layout_constraintTop_toBottomOf="@+id/textView">
-            <AutoCompleteTextView
-                android:drawableStart="@drawable/ic_baseline_search_24"
-                android:drawablePadding="10dp"
-                android:layout_width="match_parent"
-                android:maxLines="1"
-                android:hint="Search"
-                android:textAlignment="center"
-                android:paddingStart="10dp"
-                android:id="@+id/et_search"
-                android:fontFamily="@font/baloo_bhai_2"
-                android:textSize="16sp"
-                android:layout_height="match_parent"/>
+
+        <AutoCompleteTextView
+            android:id="@+id/et_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:drawableStart="@drawable/ic_baseline_search_24"
+            android:drawablePadding="10dp"
+            android:fontFamily="@font/baloo_bhai_2"
+            android:hint="Search"
+            android:maxLines="1"
+            android:paddingStart="10dp"
+            android:textAlignment="center"
+            android:textSize="16sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="20dp"
         android:id="@+id/symptoms_rec"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
         android:background="@color/md_theme_light_primaryContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/drop_down"
         tools:listitem="@layout/symptom_rec_item" />
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/drop_down">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <include
+                layout="@layout/analysis_item_placeholder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp" />
+
+            <include
+                layout="@layout/analysis_item_placeholder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp" />
+
+            <include
+                layout="@layout/analysis_item_placeholder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
 
     <include
@@ -62,8 +101,8 @@
         layout="@layout/submit_animated_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
         android:layout_marginEnd="30dp"
+        android:layout_marginBottom="20dp"
         android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
