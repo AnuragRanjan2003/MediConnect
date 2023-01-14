@@ -26,6 +26,8 @@ class MainActivity : AppCompatActivity() {
         binding.btnAdd.setOnClickListener { startActivity(Intent(this,ApplicationActivity::class.java)) }
 
 
+
+
     }
 
 
