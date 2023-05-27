@@ -1,6 +1,6 @@
 # MediConnect : Your Personal Health Assistant
 ## Description
-  Symptom Checker is an innovative Android application designed to assist users in evaluating their health condition based on symptoms they are experiencing. This app         provides a convenient and user-friendly platform to help users gain insights into possible diagnoses for their symptoms. By leveraging advanced medical algorithms and a     comprehensive symptom database, Symptom Checker empowers users to make informed decisions about their health.
+  MediConnect is an innovative Android application designed to assist users in evaluating their health condition based on symptoms they are experiencing. This app         provides a convenient and user-friendly platform to help users gain insights into possible diagnoses for their symptoms. By leveraging advanced medical algorithms and a     comprehensive symptom database, MediConnect empowers users to make informed decisions about their health.
 
 ![1-merged](https://github.com/AnuragRanjan2003/MediConnect/assets/100191258/039e62e4-e2ba-4643-8781-b893d93953b8)
 
